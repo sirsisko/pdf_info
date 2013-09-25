@@ -64,7 +64,23 @@ module PDF
         when "Pages"
           metadata[:page_count] = pair.last.to_i
         when "Encrypted"
-          metadata[:encrypted] = pair.last == 'yes'
+          if pair.last.size > 3 # more Infos then yes
+            metadata[:encrypted] = true
+            # Example: yes (print:no copy:no change:no addNotes:no)
+            rightsString = pair.last[5..-2]
+            rights = rightsString.split(" ")
+            for right in rights
+              pair = right.split(":")
+              metadata[pair.first.to_sym] = pair.last == 'yes'
+            end
+          else
+            metadata[:encrypted] = pair.last == 'yes' # just yes or no
+            # If there are no information available, then it is allowed
+            metadata[:print] = true if metadata[:print].nil? 
+            metadata[:copy] = true if metadata[:copy].nil? 
+            metadata[:change] = true if metadata[:change].nil?
+            metadata[:addNotes] = true if metadata[:addNotes].nil?
+          end
         when "Optimized"
           metadata[:optimized] = pair.last == 'yes'
         when "Tagged"
