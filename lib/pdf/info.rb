@@ -18,9 +18,10 @@ module PDF
     end
 
     def command
+      require "open3"
       output = `#{self.class.command_path} -enc UTF-8 "#{@pdf_path}" -f 1 -l -1`
-      exit_code = $? 
-      case exit_code
+      output, erroroutput,exit_code = Open3.capture3("#{self.class.command_path} -enc UTF-8 '#{@pdf_path}' -f 1 -l -1")
+      case exit_code.exitstatus
       when 0 || nil
         if !output.valid_encoding?
           # It's already UTF-8, so we need to convert to UTF-16 and back to
@@ -31,7 +32,7 @@ module PDF
         return output
       else
         exit_error = PDF::Info::UnexpectedExitError.new
-        exit_error.exit_code = exit_code
+        exit_error.exit_code = exit_code.exitstatus
         raise exit_error
       end
     end
