@@ -9,5 +9,6 @@ module PDF
     class FileError < PDF::Info::Error; end
     class OutputError < PDF::Info::Error; end
     class BadPermissionsError < PDF::Info::Error; end
+    class IncorrectPasswordExitError < PDF::Info::Error; end
   end
 end
