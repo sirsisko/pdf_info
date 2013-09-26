@@ -30,6 +30,10 @@ module PDF
           output.encode!('UTF-8')
         end
         return output
+      when 1 
+        if erroroutput.include?("Command Line Error: Incorrect password")
+          raise PDF::Info::IncorrectPasswordExitError.new
+        end
       else
         exit_error = PDF::Info::UnexpectedExitError.new
         exit_error.exit_code = exit_code.exitstatus
