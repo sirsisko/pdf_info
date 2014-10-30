@@ -100,8 +100,17 @@ module PDF
           metadata[:modification_date] = modification_date if modification_date
         when /^Page.*size$/
           metadata[:pages] ||= []
-          metadata[:pages] << pair.last.scan(/[\d.]+/).map(&:to_f)
+          p = Hash.new
+          p[:number] = pair.first[/\d+/].to_i
+          format = pair.last.scan(/(\d+)/)
+          p[:width] = format[0].first.to_i
+          p[:height] = format[1].first.to_i
+          p[:format] = pair.last.scan(/\((.+)\)/).first[0].to_s
+          metadata[:pages] << p
           metadata[:format] = pair.last.scan(/.*\(\w+\)$/).to_s
+        when /^Page.*rot$/
+          element = metadata[:pages][pair.first[/\d+/].to_i - 1]
+          element[:rotate] = pair.last[/\d+/].to_i
         when String
           metadata[pair.first.downcase.tr(" ", "_").to_sym] = pair.last.to_s.strip
         end
