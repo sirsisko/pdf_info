@@ -102,7 +102,7 @@ module PDF
           metadata[:pages] ||= []
           p = Hash.new
           p[:number] = pair.first[/\d+/].to_i
-          format = pair.last.scan(/(\d+)/)
+          format = pair.last.scan(/(\d+\.?\d+)/)
           p[:width] = format[0].first.to_i
           p[:height] = format[1].first.to_i
           p[:format] = pair.last.scan(/\((.+)\)/).first[0].to_s
